@@ -1,0 +1,19 @@
+$BGC-GREY-COLOR: #EBEEF3;
+$BGC-WHITE-COLOR: #FFFFFF;
+
+$HEADING-TEXT-BLACK: rgba(0, 0, 0, 0.85);
+$PRIMARY-TEXT-GREY: rgba(0, 0, 0, 0.75);
+$DISABLED-GREY-LIGTH: rgba(0, 0, 0, 0.35);
+$PRIMARY-BLUE: #1890FF;
+$INFO-BLUE: #1890FF;
+$SUCCESS-GREEN: #52C41A;
+$ERROR-RED: #F5222D;
+$HIGHLIGHT-RED: #F5222D;
+
+@mixin green-button {
+    border: 1px solid $SUCCESS-GREEN;
+    border-radius: 5px;
+    color: $SUCCESS-GREEN;
+    background-color: $BGC-WHITE-COLOR;
+    cursor: pointer;
+}
