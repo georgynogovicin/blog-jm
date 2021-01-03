@@ -17,8 +17,8 @@ class Request {
     }
   }
 
-  async getArticles() {
-    const res = await this.getData(`${Request.API_URL}articles`);
+  async getArticles(currentPage) {
+    const res = await this.getData(`${Request.API_URL}articles?offset=${currentPage}&limit=10`);
 
     return res;
   }

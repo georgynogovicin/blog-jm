@@ -1,7 +1,11 @@
 import request from '../api/api';
-import addId from '../helpers/addId';
 
-const addIdFn = addId();
+export const setError = (payload) => {
+  return {
+    type: 'SET-ERROR',
+    payload,
+  };
+};
 
 export const setArticles = (payload) => {
   return {
@@ -10,13 +14,30 @@ export const setArticles = (payload) => {
   };
 };
 
-export const getArticles = () => async (dispatch) => {
+export const getArticles = (currentPage) => async (dispatch) => {
   try {
-    const res = await request.getArticles();
-    const { articles } = res;
-    const articlesWithId = addIdFn(articles);
-    dispatch(setArticles(articlesWithId));
+    const res = await request.getArticles(currentPage);
+    dispatch(setArticles(res));
   } catch (error) {
-    console.log(error);
+    dispatch(setError(error));
   }
+};
+
+export const setLogIn = () => {
+  return {
+    type: 'LOG-IN',
+  };
+};
+
+export const setLogOut = () => {
+  return {
+    type: 'LOG-OUT',
+  };
+};
+
+export const setPage = (payload) => {
+  return {
+    type: 'SET-PAGE',
+    payload,
+  };
 };

@@ -17,3 +17,17 @@ $HIGHLIGHT-RED: #f5222d;
   background-color: $BGC-WHITE-COLOR;
   cursor: pointer;
 }
+
+@mixin tag-button {
+  height: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 2px;
+  background-color: $BGC-WHITE-COLOR;
+  font-size: 0.7rem;
+  margin-right: 8px;
+
+  &:disabled {
+    color: $DISABLED-GREY-LIGTH;
+    border-color: $DISABLED-GREY-LIGTH;
+  }
+}

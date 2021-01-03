@@ -1,3 +1,4 @@
+/*eslint-disable */
 import React, { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -6,12 +7,14 @@ import { getArticles } from '../../services/actions/actions';
 
 import classes from './article-list.module.scss';
 
-const ArticleList = ({ articles }) => {
+const ArticleList = ({ articles, currentPage }) => {
   const dispatch = useDispatch();
 
+  console.log(currentPage);
+
   useEffect(() => {
-    dispatch(getArticles());
-  }, [dispatch]);
+    dispatch(getArticles(currentPage));
+  }, [dispatch, currentPage]);
 
   const list = articles.map((item) => {
     const { id, ...props } = item;
@@ -20,18 +23,20 @@ const ArticleList = ({ articles }) => {
 
   return (
     <main className={classes.content}>
-      <ul className={classes['article-list']}>{list.slice(0, 10)}</ul>
+      <ul className={classes['article-list']}>{list}</ul>
     </main>
   );
 };
 
 ArticleList.propTypes = {
   articles: PropTypes.instanceOf(Array).isRequired,
+  currentPage: PropTypes.number.isRequired,
 };
 
 const mapDispatchToProps = (state) => {
   return {
-    articles: state.articles,
+    articles: state.articles.articlesList,
+    currentPage: state.currentPage,
   };
 };
 
