@@ -31,3 +31,10 @@ $HIGHLIGHT-RED: #f5222d;
     border-color: $DISABLED-GREY-LIGTH;
   }
 }
+
+@mixin like-button {
+  border: none;
+  outline: none;
+  background-color: $BGC-WHITE-COLOR;
+  cursor: pointer;
+}
