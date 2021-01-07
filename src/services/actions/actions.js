@@ -14,10 +14,32 @@ export const setArticles = (payload) => {
   };
 };
 
+export const setSingleArticle = (payload) => {
+  return {
+    type: 'SET-SINGLE-ARTICLE',
+    payload,
+  };
+};
+
+export const removeSingleArticle = () => {
+  return {
+    type: 'REMOVE-SINGLE-ARTICLE',
+  };
+};
+
 export const getArticles = (currentPage) => async (dispatch) => {
   try {
     const res = await request.getArticles(currentPage);
     dispatch(setArticles(res));
+  } catch (error) {
+    dispatch(setError(error));
+  }
+};
+
+export const getSingleArticle = (slug) => async (dispatch) => {
+  try {
+    const res = await request.getSingleArticle(slug);
+    dispatch(setSingleArticle(res.article));
   } catch (error) {
     dispatch(setError(error));
   }

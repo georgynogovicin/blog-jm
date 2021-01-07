@@ -22,6 +22,12 @@ class Request {
 
     return res;
   }
+
+  async getSingleArticle(slug) {
+    const res = await this.getData(`${Request.API_URL}articles/${slug}`);
+
+    return res;
+  }
 }
 
 const request = new Request();
