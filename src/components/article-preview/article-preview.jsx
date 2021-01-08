@@ -1,12 +1,11 @@
-/*eslint-disable */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { parseISO, format } from 'date-fns';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 import AuthorAvatar from '../author-avatar';
+import cropText from '../../services/helpers/crop-text';
 
 import classes from './article-preview.module.scss';
 
@@ -28,7 +27,7 @@ const ArticlePreview = ({
       ? tagList.map((item) => {
           return (
             <button disabled={!isLoggedIn} key={item} type="button" className={classes['tag-button']}>
-              {item}
+              {cropText(item, 20)}
             </button>
           );
         })
@@ -56,16 +55,11 @@ const ArticlePreview = ({
           <div className={classes['preview-card__tags']}>{tags}</div>
           <p className={classes[`preview-card__descr${descrClass}`]}>{description}</p>
         </div>
-        {/* <div className={classes.author}>
-          <div>
-            <h3 className={classes.author__name}>{username}</h3>
-            <p className={classes['author__create-date']}>{format(date, 'MMMM d, yyyy')}</p>
-          </div>
-          <img src={userImage} alt={`${username} icon`} className={classes.author__image} />
-        </div> */}
         <AuthorAvatar author={author} createdAt={createdAt} />
       </div>
-      <div className={classes['preview-card__body']}>{singleArticle ? <ReactMarkdown children={body} /> : null}</div>
+      <div className={classes['preview-card__body']}>
+        {singleArticle ? <ReactMarkdown>{body}</ReactMarkdown> : null}
+      </div>
     </li>
   );
 };

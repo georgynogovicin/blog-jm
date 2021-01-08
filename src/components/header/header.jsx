@@ -9,10 +9,12 @@ const Header = () => {
       <Link to="/" className={classes['header__app-name']}>
         Realworld Blog
       </Link>
-      <h2 className={classes.header__info}>Sign In</h2>
-      <button type="button" className={classes['btn-sign-up']}>
+      <Link to="/sign-in" className={classes.header__info}>
+        Sign In
+      </Link>
+      <Link to="/sign-up" className={classes['btn-sign-up']}>
         Sign Up
-      </button>
+      </Link>
     </header>
   );
 };

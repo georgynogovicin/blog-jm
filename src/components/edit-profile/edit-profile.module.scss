@@ -1,0 +1,9 @@
+@import '../../variables.scss';
+
+.edit-profile {
+    @include form;
+}
+
+.form-button {
+    @include form-button;
+}

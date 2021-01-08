@@ -1,4 +1,3 @@
-/*eslint-disable */
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import PropTypes from 'prop-types';
@@ -17,7 +16,12 @@ const AuthorAvatar = ({ author: { username, image }, createdAt }) => {
         <h3 className={classes.author__name}>{username}</h3>
         <p className={classes['author__create-date']}>{format(date, 'MMMM d, yyyy')}</p>
       </div>
-      <img src={userImage} alt={`${username} icon`} className={classes.author__image} />
+      <img
+        onError={(event) => event.target.setAttribute('src', noImage)}
+        src={userImage}
+        alt={`${username} icon`}
+        className={classes.author__image}
+      />
     </div>
   );
 };
@@ -26,7 +30,7 @@ AuthorAvatar.propTypes = {
   author: PropTypes.shape({
     username: PropTypes.string.isRequired,
     image: PropTypes.string.isRequired,
-  }),
+  }).isRequired,
   createdAt: PropTypes.string.isRequired,
 };
 

@@ -1,27 +1,27 @@
-
 @import '../../variables.scss';
 
 .author {
-    margin-left: auto;
-    text-align: right;
-  
-    display: flex;
-  
-    &__name {
-      font-size: 1.5rem;
-      font-weight: 300;
-      margin-block-end: 0;
-    }  
-      
-    &__create-date {
-      color: $DISABLED-GREY-LIGTH;
-    }
-  
-    &__image {
-      max-width: 46px;
-      max-height: 46px;
-      margin-left: 12px;
-      background-color: blue;
-      border-radius: 50%;
-    }
+  margin-left: auto;
+  text-align: right;
+
+  display: flex;
+
+  &__name {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-block-end: 0;
   }
+
+  &__create-date {
+    color: $DISABLED-GREY-LIGTH;
+  }
+
+  &__image {
+    max-width: 46px;
+    min-width: 46px;
+    max-height: 46px;
+    margin-left: 12px;
+    background-color: blue;
+    border-radius: 50%;
+  }
+}
