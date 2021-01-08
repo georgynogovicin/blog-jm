@@ -45,9 +45,6 @@ const ArticleList = ({ articles, currentPage, articlesCount }) => {
     />
   ) : null;
 
-  // const percent = articlesCount * 100 / list.length;
-  // const progress = <Progress percent={percent} status='active' style={{ marginTop: '20px' }} />;
-
   return (
     <main className={classes.content}>
       <ul className={classes['article-list']}>

@@ -58,11 +58,4 @@ SingleArticlePage.propTypes = {
   singleArticle: PropTypes.instanceOf(Object),
 };
 
-// SingleArticlePage.propTypes = {
-//     singleArticle: PropTypes.oneOfType([
-//         PropTypes.oneOf([null]).isRequired,
-//         PropTypes.instanceOf(Object).isRequired
-//     ]).isRequired
-// }
-
 export default connect(mapDispatchToProps)(SingleArticlePage);
