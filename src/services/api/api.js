@@ -28,6 +28,17 @@ class Request {
 
     return res;
   }
+
+  async isUserNameFree(username) {
+    try {
+      const res = await this.getData(`${Request.API_URL}profiles/${username}`);
+
+      if (res.profile) return false;
+    } catch (error) {
+      if (error.name === 'Error') return true;
+    }
+    return true;
+  }
 }
 
 const request = new Request();

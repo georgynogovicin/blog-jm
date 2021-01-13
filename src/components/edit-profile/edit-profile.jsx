@@ -1,35 +1,40 @@
 import React from 'react';
+import { useForm } from 'react-hook-form';
 
 import classes from './edit-profile.module.scss';
 
 const EditProfile = () => {
+  const { register, handleSubmit } = useForm();
+
+  const onSubmit = (data) => console.log(data);
+
   return (
-    <form className={classes['edit-profile']}>
+    <form className={classes['edit-profile']} onSubmit={handleSubmit(onSubmit)}>
       <fieldset>
         <legend>Edit Profile</legend>
         <ul role="none">
           <li>
             <label>
               Username
-              <input type="email" placeholder="Username" />
+              <input name="name" type="text" placeholder="Username" ref={register} />
             </label>
           </li>
           <li>
             <label>
               Email address
-              <input type="email" placeholder="Email address" />
+              <input name="email" type="email" placeholder="Email address" ref={register} />
             </label>
           </li>
           <li>
             <label>
               New password
-              <input type="password" placeholder="New password" />
+              <input name="password" type="password" placeholder="New password" ref={register} />
             </label>
           </li>
           <li>
             <label>
               Avatar image (url)
-              <input type="text" placeholder="Avatar image" />
+              <input name="avatar" type="text" placeholder="Avatar image" ref={register} />
             </label>
           </li>
 
