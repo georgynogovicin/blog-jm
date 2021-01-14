@@ -1,16 +1,54 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import FormInput from '../form-components/form-input';
 import CheckboxInput from '../form-components/checkbox-input';
 import request from '../../services/api/api';
+import { setError as setErrorToState, setCurrentUser, setLogIn } from '../../services/actions/actions';
+import { redirectToArticles } from '../../services/routes/routes';
 
 import classes from './sign-up-form.module.scss';
 
 const SignUpForm = () => {
-  const { register, handleSubmit, errors, watch } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const { register, handleSubmit, errors, watch, setError } = useForm();
   const repeatPassword = watch('password', '');
+
+  const errorHandler = (error) => {
+    const errorNames = Object.keys(error);
+    const errorMessages = errorNames.reduce((acc, item) => {
+      acc.push({
+        type: 'server',
+        name: item,
+        message: error[item][0],
+      });
+      return acc;
+    }, []);
+    errorMessages.forEach(({ name, type, message }) => {
+      setError(name, { type, message });
+    });
+  };
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await request.registerUser(data);
+
+      if (res.errors) {
+        errorHandler(res.errors);
+      }
+
+      if (res.user) {
+        dispatch(setCurrentUser(res.user));
+        dispatch(setLogIn());
+        history.push(redirectToArticles());
+      }
+    } catch (error) {
+      dispatch(setErrorToState(error));
+    }
+  };
 
   return (
     <form className={classes['sign-up']} onSubmit={handleSubmit(onSubmit)}>
@@ -53,7 +91,7 @@ const SignUpForm = () => {
             errors={errors}
             ref={register({
               required: { value: true, message: 'Введите пароль' },
-              minLength: { value: 6, message: 'Пароль должен быть длинее 6-ти символов' },
+              minLength: { value: 8, message: 'Пароль должен быть длинее 6-ти символов' },
               maxLength: { value: 40, message: 'Пароль должен быть короче 40-ка символов' },
             })}
           />

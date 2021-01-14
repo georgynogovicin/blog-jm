@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
@@ -9,19 +9,10 @@ import cropText from '../../services/helpers/crop-text';
 
 import classes from './article-preview.module.scss';
 
-const ArticlePreview = ({
-  slug,
-  title,
-  body,
-  description,
-  tagList,
-  author,
-  createdAt,
-  favorited,
-  favoritesCount,
-  isLoggedIn,
-  singleArticle,
-}) => {
+const ArticlePreview = ({ slug, title, body, description, tagList, author, createdAt, favorited, favoritesCount }) => {
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  const singleArticle = useSelector((state) => state.articles.singleArticle);
+
   const tags =
     tagList.length > 0
       ? tagList.map((item) => {
@@ -64,29 +55,16 @@ const ArticlePreview = ({
   );
 };
 
-ArticlePreview.defaultProps = {
-  singleArticle: null,
-};
-
 ArticlePreview.propTypes = {
   slug: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   body: PropTypes.string.isRequired,
   tagList: PropTypes.instanceOf(Array).isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
   author: PropTypes.instanceOf(Object).isRequired,
   createdAt: PropTypes.string.isRequired,
   favorited: PropTypes.bool.isRequired,
   favoritesCount: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired,
-  singleArticle: PropTypes.instanceOf(Object),
 };
 
-const mapDispatchToProps = (state) => {
-  return {
-    isLoggedIn: state.isLoggedIn,
-    singleArticle: state.articles.singleArticle,
-  };
-};
-
-export default connect(mapDispatchToProps)(ArticlePreview);
+export default ArticlePreview;

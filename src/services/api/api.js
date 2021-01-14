@@ -1,20 +1,23 @@
 class Request {
   static API_URL = `https://conduit.productionready.io/api/`;
 
-  async getData(url) {
-    try {
-      const res = await fetch(url);
+  async getData(url, options = null) {
+    // try {
+    //   const res = await fetch(url, options);
 
-      if (!res.ok) {
-        throw new Error(`Failed to fetch ${url}. Response ${res.status}`);
-      }
+    //   if (!res.ok) {
+    //     throw new Error(`Failed to fetch ${url}. Response ${res.status}`);
+    //   }
 
-      const body = await res.json();
+    //   const body = await res.json();
 
-      return body;
-    } catch (error) {
-      throw new Error(error);
-    }
+    //   return body;
+    // } catch (error) {
+    //   throw new Error(error);
+    // }
+    const res = await fetch(url, options);
+    const body = await res.json();
+    return body;
   }
 
   async getArticles(currentPage) {
@@ -38,6 +41,67 @@ class Request {
       if (error.name === 'Error') return true;
     }
     return true;
+  }
+
+  async registerUser(data) {
+    const { name: username, email, password } = data;
+
+    const regUserData = {
+      user: {
+        username,
+        email,
+        password,
+      },
+    };
+
+    const regUserOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': `application/json;charset=utf-8`,
+      },
+      body: JSON.stringify(regUserData),
+    };
+
+    const res = await this.getData(`${Request.API_URL}users`, regUserOptions);
+
+    return res;
+  }
+
+  async userAuth(data) {
+    const { email, password } = data;
+
+    const userData = {
+      user: {
+        email,
+        password,
+      },
+    };
+
+    const authOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': `application/json;charset=utf-8`,
+      },
+      body: JSON.stringify(userData),
+    };
+
+    const res = await this.getData(`${Request.API_URL}users/login`, authOptions);
+
+    return res;
+  }
+
+  async getCurrentUser(token) {
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Authorization: `Token ${token}`,
+      },
+    };
+
+    const res = await this.getData(`${Request.API_URL}user`, options);
+
+    return res;
   }
 }
 

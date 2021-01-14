@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { useDispatch, connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { Spin } from 'antd';
 import ArticlePreview from '../article-preview';
@@ -9,8 +8,9 @@ import request from '../../services/api/api';
 
 import classes from './single-artcile-page.module.scss';
 
-const SingleArticlePage = ({ singleArticle }) => {
+const SingleArticlePage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const singleArticle = useSelector((state) => state.articles.singleArticle);
 
   const { slug } = useParams();
   const dispatch = useDispatch();
@@ -44,18 +44,4 @@ const SingleArticlePage = ({ singleArticle }) => {
   );
 };
 
-const mapDispatchToProps = (state) => {
-  return {
-    singleArticle: state.articles.singleArticle,
-  };
-};
-
-SingleArticlePage.defaultProps = {
-  singleArticle: null,
-};
-
-SingleArticlePage.propTypes = {
-  singleArticle: PropTypes.instanceOf(Object),
-};
-
-export default connect(mapDispatchToProps)(SingleArticlePage);
+export default SingleArticlePage;

@@ -42,6 +42,11 @@ $HIGHLIGHT-RED: #f5222d;
   cursor: pointer;
 }
 
+@mixin log-out-button {
+  @include green-button;
+  
+}
+
 @mixin form-button {
   height: 40px;
   width: 100%;

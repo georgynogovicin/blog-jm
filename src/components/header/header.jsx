@@ -1,20 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import HeaderAuth from '../header-auth';
+import HeaderUserView from '../header-user-view';
 
 import classes from './header.module.scss';
 
 const Header = () => {
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+
   return (
     <header className={classes.header}>
       <Link to="/" className={classes['header__app-name']}>
         Realworld Blog
       </Link>
-      <Link to="/sign-in" className={classes.header__info}>
-        Sign In
-      </Link>
-      <Link to="/sign-up" className={classes['btn-sign-up']}>
-        Sign Up
-      </Link>
+      {isLoggedIn ? <HeaderUserView /> : <HeaderAuth />}
     </header>
   );
 };

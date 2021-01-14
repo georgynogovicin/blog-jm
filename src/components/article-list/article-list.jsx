@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import { Spin, Pagination } from 'antd';
 import ArticlePreview from '../article-preview';
 import { getArticles, setPage } from '../../services/actions/actions';
 
 import classes from './article-list.module.scss';
 
-const ArticleList = ({ articles, currentPage, articlesCount }) => {
+const ArticleList = () => {
   const dispatch = useDispatch();
+  const articles = useSelector((state) => state.articles.articlesList);
+  const currentPage = useSelector((state) => state.currentPage);
+  const articlesCount = useSelector((state) => state.articles.articlesCount);
 
   useEffect(() => {
     dispatch(getArticles(currentPage));
@@ -48,7 +50,6 @@ const ArticleList = ({ articles, currentPage, articlesCount }) => {
   return (
     <main className={classes.content}>
       <ul className={classes['article-list']}>
-        {/* {progress} */}
         {list}
         {pagination}
       </ul>
@@ -57,18 +58,4 @@ const ArticleList = ({ articles, currentPage, articlesCount }) => {
   );
 };
 
-ArticleList.propTypes = {
-  articles: PropTypes.instanceOf(Array).isRequired,
-  currentPage: PropTypes.number.isRequired,
-  articlesCount: PropTypes.number.isRequired,
-};
-
-const mapDispatchToProps = (state) => {
-  return {
-    articles: state.articles.articlesList,
-    currentPage: state.currentPage,
-    articlesCount: state.articles.articlesCount,
-  };
-};
-
-export default connect(mapDispatchToProps)(ArticleList);
+export default ArticleList;

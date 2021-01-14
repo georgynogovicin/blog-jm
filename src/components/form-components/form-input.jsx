@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-// import classes from './form-input.module.scss';
-
 const FormInput = React.forwardRef((props, ref) => {
   const { label, name, type, errors } = props;
 

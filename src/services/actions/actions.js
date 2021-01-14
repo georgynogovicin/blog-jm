@@ -63,3 +63,10 @@ export const setPage = (payload) => {
     payload,
   };
 };
+
+export const setCurrentUser = (payload) => {
+  return {
+    type: 'SET-CURRENT-USER',
+    payload,
+  };
+};
