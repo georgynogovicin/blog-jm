@@ -103,6 +103,32 @@ class Request {
 
     return res;
   }
+
+  async editUser(data, token) {
+    const { email, password, name, avatar } = data;
+
+    const userData = {
+      user: {
+        email,
+        password,
+        username: name,
+        image: avatar,
+      },
+    };
+
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify(userData),
+    };
+
+    const res = await this.getData(`${Request.API_URL}user`, options);
+
+    return res;
+  }
 }
 
 const request = new Request();

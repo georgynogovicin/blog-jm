@@ -24,17 +24,17 @@
 }
 
 .btn-log-out {
-    @include log-out-button;
-    margin-left: 27px;
-    width: 109px;
-    height: 51px;
-    font-size: 1rem;
-    color: $HEADING-TEXT-BLACK;
-    border-color: $HEADING-TEXT-BLACK;
+  @include log-out-button;
+  margin-left: 27px;
+  width: 109px;
+  height: 51px;
+  font-size: 1rem;
+  color: $HEADING-TEXT-BLACK;
+  border-color: $HEADING-TEXT-BLACK;
 }
 
 .btn-create-article {
-    @include green-button;
-    margin-right: 26px;
-    height: 32px;
+  @include green-button;
+  margin-right: 26px;
+  height: 32px;
 }

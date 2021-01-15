@@ -1,36 +1,60 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import FormInput from '../form-components/form-input';
 import request from '../../services/api/api';
+import { setCurrentUser, setError } from '../../services/actions/actions';
+import { setUserToLocalStorage } from '../../services/api/localStroage';
+import { redirectToArticles } from '../../services/routes/routes';
 
 import classes from './edit-profile.module.scss';
 
 const EditProfile = () => {
   const { register, handleSubmit, errors } = useForm();
+  const authToken = useSelector((state) => state.currentUser.token);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
-  const onSubmit = (data) => console.log(data);
+  const errorHandler = (error) => {
+    const errorNames = Object.keys(error);
+    const errorMessages = errorNames.reduce((acc, item) => {
+      acc.push({
+        type: 'server',
+        name: item,
+        message: error[item][0],
+      });
+      return acc;
+    }, []);
+    errorMessages.forEach(({ name, type, message }) => {
+      setError(name, { type, message });
+    });
+  };
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await request.editUser(data, authToken);
+
+      if (res.errors) {
+        errorHandler(res.errors);
+      }
+
+      if (res.user) {
+        dispatch(setCurrentUser(res.user));
+        setUserToLocalStorage(res.user);
+        history.push(redirectToArticles());
+      }
+    } catch (error) {
+      dispatch(setError(error));
+    }
+  };
 
   return (
     <form className={classes['edit-profile']} onSubmit={handleSubmit(onSubmit)}>
       <fieldset>
         <legend>Edit Profile</legend>
         <ul role="none">
-          <FormInput
-            label="Username"
-            name="name"
-            type="text"
-            errors={errors}
-            ref={register({
-              required: { value: true, message: 'Введите имя пользователя' },
-              minLength: { value: 3, message: 'Имя должно быть длиннее 3-х символов' },
-              maxLength: { value: 20, message: 'Имя должно быть не больше 20-ти символов' },
-              validate: {
-                userName: async (value) => {
-                  return (await request.isUserNameFree(value)) || 'Имя пользователя уже занято';
-                },
-              },
-            })}
-          />
+          <FormInput label="Username" name="name" type="text" errors={errors} ref={register({ required: true })} />
           <FormInput
             label="Email address"
             name="email"
@@ -45,7 +69,7 @@ const EditProfile = () => {
             })}
           />
           <FormInput
-            label="Password"
+            label="New Password"
             name="password"
             type="password"
             errors={errors}
