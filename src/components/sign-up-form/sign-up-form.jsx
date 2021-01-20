@@ -7,6 +7,7 @@ import CheckboxInput from '../form-components/checkbox-input';
 import request from '../../services/api/api';
 import { setError as setErrorToState, setCurrentUser, setLogIn } from '../../services/actions/actions';
 import { redirectToArticles } from '../../services/routes/routes';
+import formsErrorHandler from '../../services/helpers/formsErrorHandler';
 
 import classes from './sign-up-form.module.scss';
 
@@ -17,27 +18,12 @@ const SignUpForm = () => {
   const { register, handleSubmit, errors, watch, setError } = useForm();
   const repeatPassword = watch('password', '');
 
-  const errorHandler = (error) => {
-    const errorNames = Object.keys(error);
-    const errorMessages = errorNames.reduce((acc, item) => {
-      acc.push({
-        type: 'server',
-        name: item,
-        message: error[item][0],
-      });
-      return acc;
-    }, []);
-    errorMessages.forEach(({ name, type, message }) => {
-      setError(name, { type, message });
-    });
-  };
-
   const onSubmit = async (data) => {
     try {
       const res = await request.registerUser(data);
 
       if (res.errors) {
-        errorHandler(res.errors);
+        formsErrorHandler(res.errors, setError);
       }
 
       if (res.user) {
@@ -91,7 +77,7 @@ const SignUpForm = () => {
             errors={errors}
             ref={register({
               required: { value: true, message: 'Введите пароль' },
-              minLength: { value: 8, message: 'Пароль должен быть длинее 6-ти символов' },
+              minLength: { value: 6, message: 'Пароль должен быть длинее 6-ти символов' },
               maxLength: { value: 40, message: 'Пароль должен быть короче 40-ка символов' },
             })}
           />

@@ -21,9 +21,11 @@ const HeaderUserView = () => {
 
   return (
     <div className={classes.user}>
-      <button type="button" className={classes['btn-create-article']}>
-        Create Article
-      </button>
+      <Link to="/new-article">
+        <button type="button" className={classes['btn-create-article']}>
+          Create Article
+        </button>
+      </Link>
       <Link to="/profile" style={{ display: 'flex' }}>
         <div>
           <h3 className={classes.user__name}>{username}</h3>

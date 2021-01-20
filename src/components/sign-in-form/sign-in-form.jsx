@@ -15,7 +15,7 @@ const SignInForm = () => {
   const history = useHistory();
   const { register, handleSubmit, errors } = useForm();
   const onSubmit = async (value) => {
-    const res = await request.userAuth(value);
+    const res = await request.userAuth(value); // TODO catch errors
 
     if (res.user) {
       dispatch(setCurrentUser(res.user));

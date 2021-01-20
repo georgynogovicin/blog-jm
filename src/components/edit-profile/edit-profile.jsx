@@ -4,39 +4,25 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import FormInput from '../form-components/form-input';
 import request from '../../services/api/api';
-import { setCurrentUser, setError } from '../../services/actions/actions';
+import { setCurrentUser, setError as setErrorAction } from '../../services/actions/actions';
 import { setUserToLocalStorage } from '../../services/api/localStroage';
 import { redirectToArticles } from '../../services/routes/routes';
+import formsErrorHandler from '../../services/helpers/formsErrorHandler';
 
 import classes from './edit-profile.module.scss';
 
 const EditProfile = () => {
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, errors, setError } = useForm();
   const authToken = useSelector((state) => state.currentUser.token);
   const dispatch = useDispatch();
   const history = useHistory();
-
-  const errorHandler = (error) => {
-    const errorNames = Object.keys(error);
-    const errorMessages = errorNames.reduce((acc, item) => {
-      acc.push({
-        type: 'server',
-        name: item,
-        message: error[item][0],
-      });
-      return acc;
-    }, []);
-    errorMessages.forEach(({ name, type, message }) => {
-      setError(name, { type, message });
-    });
-  };
 
   const onSubmit = async (data) => {
     try {
       const res = await request.editUser(data, authToken);
 
       if (res.errors) {
-        errorHandler(res.errors);
+        formsErrorHandler(res.errors, setError);
       }
 
       if (res.user) {
@@ -45,7 +31,7 @@ const EditProfile = () => {
         history.push(redirectToArticles());
       }
     } catch (error) {
-      dispatch(setError(error));
+      dispatch(setErrorAction(error));
     }
   };
 

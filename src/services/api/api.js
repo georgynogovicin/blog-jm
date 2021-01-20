@@ -129,6 +129,32 @@ class Request {
 
     return res;
   }
+
+  async createArticle(data, token) {
+    const { title, description, text: body, tag: tagList } = data;
+
+    const articleData = {
+      article: {
+        title,
+        description,
+        body,
+        tagList,
+      },
+    };
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify(articleData),
+    };
+
+    const res = await this.getData(`${Request.API_URL}articles`, options);
+
+    return res;
+  }
 }
 
 const request = new Request();

@@ -46,6 +46,18 @@ $HIGHLIGHT-RED: #f5222d;
   @include green-button;
 }
 
+@mixin delete-button {
+  @include green-button;
+  color: $ERROR-RED;
+  border-color: $ERROR-RED;
+}
+
+@mixin add-button {
+  @include green-button;
+  color: $PRIMARY-BLUE;
+  border-color: $PRIMARY-BLUE;
+}
+
 @mixin form-button {
   height: 40px;
   width: 100%;
@@ -97,5 +109,9 @@ $HIGHLIGHT-RED: #f5222d;
   }
   & p {
     color: $DISABLED-GREY-LIGTH;
+  }
+  & textarea {
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
   }
 }
