@@ -15,7 +15,7 @@ const AuthorAvatar = ({ author: { username, image }, createdAt }) => {
   };
 
   return (
-    <div className={classes.author}>
+    <div className={classes.author__avatar}>
       <div>
         <h3 className={classes.author__name}>{username}</h3>
         <p className={classes['author__create-date']}>{getDate(createdAt)}</p>

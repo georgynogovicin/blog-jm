@@ -155,6 +155,20 @@ class Request {
 
     return res;
   }
+
+  async deleteArticle(slug, token) {
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Authorization: `Token ${token}`,
+      },
+    };
+
+    await this.getData(`${Request.API_URL}articles/${slug}`, options);
+
+    return 'Deleted';
+  }
 }
 
 const request = new Request();

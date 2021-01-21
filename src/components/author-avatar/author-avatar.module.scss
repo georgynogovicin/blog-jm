@@ -5,6 +5,17 @@
   text-align: right;
 
   display: flex;
+  flex-direction: column;
+
+  &__avatar {
+    display: flex;
+  }
+
+  &__edit-block {
+    padding: 30px 0;
+    display: flex;
+    justify-content: space-around;
+  }
 
   &__name {
     font-size: 1.5rem;

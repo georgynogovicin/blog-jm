@@ -4,24 +4,33 @@ import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import FormInput from '../form-components/form-input';
 import request from '../../services/api/api';
-import { setCurrentUser, setLogIn } from '../../services/actions/actions';
+import { setCurrentUser, setLogIn, setError as setErrorToState } from '../../services/actions/actions';
 import { setUserToLocalStorage } from '../../services/api/localStroage';
 import { redirectToArticles } from '../../services/routes/routes';
+import formsErrorHandler from '../../services/helpers/formsErrorHandler';
 
 import classes from './sign-in-form.module.scss';
 
 const SignInForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, errors, setError } = useForm();
   const onSubmit = async (value) => {
-    const res = await request.userAuth(value); // TODO catch errors
+    try {
+      const res = await request.userAuth(value);
 
-    if (res.user) {
-      dispatch(setCurrentUser(res.user));
-      dispatch(setLogIn());
-      setUserToLocalStorage(res.user);
-      history.push(redirectToArticles());
+      if (res.user) {
+        dispatch(setCurrentUser(res.user));
+        dispatch(setLogIn());
+        setUserToLocalStorage(res.user);
+        history.push(redirectToArticles());
+      }
+
+      if (res.errors) {
+        formsErrorHandler(res.errors, setError);
+      }
+    } catch (error) {
+      dispatch(setErrorToState(error));
     }
   };
 
