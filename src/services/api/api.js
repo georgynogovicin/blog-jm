@@ -156,6 +156,32 @@ class Request {
     return res;
   }
 
+  async updateArticle(data, token, slug) {
+    const { title, description, text: body, tag: tagList } = data;
+
+    const articleData = {
+      article: {
+        title,
+        description,
+        body,
+        tagList,
+      },
+    };
+
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify(articleData),
+    };
+
+    const res = await this.getData(`${Request.API_URL}articles/${slug}`, options);
+
+    return res;
+  }
+
   async deleteArticle(slug, token) {
     const options = {
       method: 'DELETE',

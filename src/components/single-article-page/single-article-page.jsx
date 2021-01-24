@@ -9,7 +9,9 @@ import request from '../../services/api/api';
 import classes from './single-artcile-page.module.scss';
 
 const SingleArticlePage = () => {
+  // TODO добавить обработку ошибки 404
   const [isLoaded, setIsLoaded] = useState(false);
+  // const [notFoundError, setNotFoundError] = useState(false);
   const singleArticle = useSelector((state) => state.articles.singleArticle);
 
   const { slug } = useParams();
@@ -19,6 +21,10 @@ const SingleArticlePage = () => {
     const getData = async () => {
       try {
         const res = await request.getSingleArticle(slug);
+
+        // if (res.status === 404) {
+        //   setNotFoundError(true);
+        // }
 
         dispatch(setSingleArticle(res.article));
         setIsLoaded(true);

@@ -7,7 +7,9 @@ import SingleArticlePage from '../single-article-page';
 import SignInForm from '../sign-in-form';
 import SignUpForm from '../sign-up-form';
 import EditProfile from '../edit-profile';
-import CreateArticleForm from '../create-article-form';
+// import CreateArticleForm from '../create-article-form';
+import NewArticle from '../new-article';
+import EditArticle from '../edit-article';
 import { getUserFromLocalStorage } from '../../services/api/localStroage';
 import { setLogIn, setCurrentUser, setError } from '../../services/actions/actions';
 import request from '../../services/api/api';
@@ -50,7 +52,8 @@ const App = () => {
           <Route path="/sign-in" component={SignInForm} exact />
           <Route path="/sign-up" component={SignUpForm} exact />
           <Route path="/profile" component={EditProfile} exact />
-          <Route path="/new-article" component={CreateArticleForm} exact />
+          <Route path="/new-article" component={NewArticle} exact />
+          <Route path="/articles/:slug/edit" component={EditArticle} exact />
           <Redirect to="/" />
         </Switch>
       </Router>

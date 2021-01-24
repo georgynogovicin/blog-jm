@@ -1,39 +1,46 @@
-import React, { useState } from 'react';
+/*eslint-disable */
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useHistory, Redirect } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import FormInput from '../form-components/form-input';
-import request from '../../services/api/api';
-import { setError as setErrorToState, setSingleArticle } from '../../services/actions/actions';
-import { redirectToSingleArticle } from '../../services/routes/routes';
 import formsErrorHandler from '../../services/helpers/formsErrorHandler';
 
 import classes from './create-artcile-form.module.scss';
 
-const CreateArticleForm = () => {
-  const [tagsCount, setTagsCount] = useState(0);
-  const dispatch = useDispatch();
-  const authToken = useSelector((state) => state.currentUser.token);
-  const { register, handleSubmit, errors, setError } = useForm();
-  const history = useHistory();
+const CreateArticleForm = ({ onSubmit, error, edit, articleData }) => {
+  const [tagsCount, setTagsCount] = useState(1);
+  const [tagsValue, setTagsValue] = useState({});
+
   const isAuth = useSelector((state) => state.isLoggedIn);
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await request.createArticle(data, authToken);
+  const { title: defaultTitle, description: defaultDescription, body: defaultBody, tagList: defaultTags } = articleData;
 
-      if (res.article) {
-        const { slug } = res.article;
-        dispatch(setSingleArticle(res.article));
-        history.push(redirectToSingleArticle(slug));
-      }
+  const { register, handleSubmit, errors, setError } = useForm({
+    defaultValues: {
+      title: defaultTitle,
+      description: defaultDescription,
+    },
+  });
 
-      if (res.errors) {
-        formsErrorHandler(res.errors, setError);
-      }
-    } catch (error) {
-      dispatch(setErrorToState(error));
+  useEffect(() => {
+    if (edit) {
+      setTagsCount(defaultTags.length);
+      const tagList = defaultTags.reduce((acc, item, i) => {
+        acc[`tag${i + 1}`] = item;
+        return acc;
+      }, {});
+      setTagsValue(tagList);
     }
+  }, []);
+
+  if (error) {
+    formsErrorHandler(error, setError);
+  }
+
+  const onSubmitForm = (data) => {
+    onSubmit(data);
   };
 
   const addTag = () => {
@@ -46,10 +53,16 @@ const CreateArticleForm = () => {
 
   const tagsList = [];
 
-  for (let i = 0; i <= tagsCount; i++) {
+  for (let i = 1; i <= tagsCount; i++) {
     tagsList.push(
       <div key={i} style={{ display: 'flex', marginBottom: 5 }}>
-        <input type="text" placeholder="tag" name={`tag[${i}]`} ref={register()} />
+        <input
+          type="text"
+          placeholder="tag"
+          name={`tag[${i}]`}
+          defaultValue={tagsValue[`tag${i}`] || ''}
+          ref={register()}
+        />
         <button type="button" className={classes['delete-button']} onClick={deleteTag}>
           Delete
         </button>
@@ -62,9 +75,9 @@ const CreateArticleForm = () => {
   }
 
   return (
-    <form className={classes['create-article']} onSubmit={handleSubmit(onSubmit)}>
+    <form className={classes['create-article']} onSubmit={handleSubmit(onSubmitForm)}>
       <fieldset>
-        <legend>Create new article</legend>
+        <legend>{edit ? 'Edit article' : 'Create new article'}</legend>
         <ul role="none">
           <FormInput
             label="Title"
@@ -89,6 +102,7 @@ const CreateArticleForm = () => {
                 name="text"
                 placeholder="Text"
                 rows={8}
+                defaultValue={defaultBody}
                 ref={register({ required: { value: true, message: 'Введите текст' } })}
               />
               {errors.text && <p style={{ color: '#F5222D' }}>{errors.text.message}</p>}
@@ -112,6 +126,19 @@ const CreateArticleForm = () => {
       </fieldset>
     </form>
   );
+};
+
+CreateArticleForm.defaultProps = {
+  error: null,
+  articleData: {},
+  edit: false,
+};
+
+CreateArticleForm.propTypes = {
+  error: PropTypes.instanceOf(Array),
+  onSubmit: PropTypes.func.isRequired,
+  edit: PropTypes.bool,
+  articleData: PropTypes.instanceOf(Object),
 };
 
 export default CreateArticleForm;

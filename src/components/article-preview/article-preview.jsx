@@ -8,7 +8,7 @@ import { Popconfirm } from 'antd';
 import AuthorAvatar from '../author-avatar';
 import cropText from '../../services/helpers/crop-text';
 import request from '../../services/api/api';
-import { redirectToArticles } from '../../services/routes/routes';
+import { redirectToArticles, redirectToEditArticle } from '../../services/routes/routes';
 
 import classes from './article-preview.module.scss';
 
@@ -21,9 +21,12 @@ const ArticlePreview = ({ slug, title, body, description, tagList, author, creat
   const history = useHistory();
 
   const onDeleteArticle = () => {
-    const res = request.deleteArticle(slug, authToken);
+    request.deleteArticle(slug, authToken);
     history.push(redirectToArticles());
-    console.log(res);
+  };
+
+  const onEditArticle = () => {
+    history.push(redirectToEditArticle(slug));
   };
 
   const isOwnArticle = currentUser.username === author.username && singleArticle;
@@ -76,7 +79,7 @@ const ArticlePreview = ({ slug, title, body, description, tagList, author, creat
                   Delete
                 </button>
               </Popconfirm>
-              <button type="button" className={classes['delete-button']}>
+              <button type="button" className={classes['delete-button']} onClick={onEditArticle}>
                 Edit
               </button>
             </div>
