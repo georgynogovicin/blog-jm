@@ -1,1 +1,4 @@
-Blog Platform for JM
+#Blog Platform for JM
+
+[Link to App](https://blog-jm.georgynogovicin.vercel.app)
+
