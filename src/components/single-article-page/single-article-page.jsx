@@ -1,51 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { Spin } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Spin } from 'antd';
+import { getSingleArticle, removeSingleArticle, setSingleArticleIsUnloaded } from '../../services/actions/actions';
 import ArticlePreview from '../article-preview';
-import { setError, removeSingleArticle, setSingleArticle } from '../../services/actions/actions';
-import request from '../../services/api/api';
 
 import classes from './single-artcile-page.module.scss';
 
 const SingleArticlePage = () => {
-  // TODO добавить обработку ошибки 404
-  const [isLoaded, setIsLoaded] = useState(false);
-  // const [notFoundError, setNotFoundError] = useState(false);
-  const singleArticle = useSelector((state) => state.articles.singleArticle);
-
   const { slug } = useParams();
   const dispatch = useDispatch();
+  const authToken = useSelector((state) => state.currentUser.token);
+  const isLoaded = useSelector((state) => state.articles.singleArticleIsLoaded);
+  const article = useSelector((state) => state.articles.singleArticle);
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await request.getSingleArticle(slug);
-
-        // if (res.status === 404) {
-        //   setNotFoundError(true);
-        // }
-
-        dispatch(setSingleArticle(res.article));
-        setIsLoaded(true);
-      } catch (error) {
-        dispatch(setError(error));
-      }
-    };
-
-    getData();
-
+    dispatch(getSingleArticle(slug, authToken));
     return () => {
       dispatch(removeSingleArticle());
+      dispatch(setSingleArticleIsUnloaded());
     };
-  }, [dispatch, slug]);
+  }, [authToken, slug, dispatch]);
 
-  const spinner = !isLoaded ? <Spin style={{ position: 'absolute', top: '50%', left: '50%' }} size="large" /> : null;
+  const spinner = <Spin style={{ position: 'absolute', top: '50%', left: '50%' }} size="large" />;
 
   return (
     <main className={classes.content}>
-      <ul className={classes['article-list']}>{isLoaded ? <ArticlePreview {...singleArticle} /> : null}</ul>
-      {spinner}
+      {!isLoaded || (
+        <ul className={classes['article-list']}>
+          <ArticlePreview slug={slug} isList={false} article={article} />
+        </ul>
+      )}
+      {isLoaded || spinner}
     </main>
   );
 };

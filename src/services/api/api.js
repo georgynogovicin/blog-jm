@@ -2,32 +2,35 @@ class Request {
   static API_URL = `https://conduit.productionready.io/api/`;
 
   async getData(url, options = null) {
-    // try {
-    //   const res = await fetch(url, options);
-
-    //   if (!res.ok) {
-    //     throw new Error(`Failed to fetch ${url}. Response ${res.status}`);
-    //   }
-
-    //   const body = await res.json();
-
-    //   return body;
-    // } catch (error) {
-    //   throw new Error(error);
-    // }
     const res = await fetch(url, options);
     const body = await res.json();
     return body;
   }
 
-  async getArticles(currentPage) {
-    const res = await this.getData(`${Request.API_URL}articles?offset=${currentPage}&limit=10`);
+  async getArticles(currentPage, token = null) {
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': `application/json;charset=utf-8`,
+        Authorization: `Token ${token}`,
+      },
+    };
+
+    const res = await this.getData(`${Request.API_URL}articles?offset=${currentPage}&limit=10`, token && options);
 
     return res;
   }
 
-  async getSingleArticle(slug) {
-    const res = await this.getData(`${Request.API_URL}articles/${slug}`);
+  async getSingleArticle(slug, token = null) {
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': `application/json;charset=utf-8`,
+        Authorization: `Token ${token}`,
+      },
+    };
+
+    const res = await this.getData(`${Request.API_URL}articles/${slug}`, token && options);
 
     return res;
   }
@@ -194,6 +197,21 @@ class Request {
     await this.getData(`${Request.API_URL}articles/${slug}`, options);
 
     return 'Deleted';
+  }
+
+  async favoriteArticle(slug, token, favorited) {
+    const method = favorited ? 'DELETE' : 'POST';
+    const options = {
+      method,
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Authorization: `Token ${token}`,
+      },
+    };
+
+    const res = this.getData(`${Request.API_URL}articles/${slug}/favorite`, options);
+
+    return res;
   }
 }
 

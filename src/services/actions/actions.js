@@ -21,25 +21,38 @@ export const setSingleArticle = (payload) => {
   };
 };
 
+export const setSingleArticleIsLoaded = () => {
+  return {
+    type: 'SET-SINGLE-ARTICLE-IS-LOADED',
+  };
+};
+
+export const setSingleArticleIsUnloaded = () => {
+  return {
+    type: 'SET-SINGLE-ARTICLE-IS-UNLOADED',
+  };
+};
+
 export const removeSingleArticle = () => {
   return {
     type: 'REMOVE-SINGLE-ARTICLE',
   };
 };
 
-export const getArticles = (currentPage) => async (dispatch) => {
+export const getArticles = (currentPage, token = null) => async (dispatch) => {
   try {
-    const res = await request.getArticles(currentPage);
+    const res = await request.getArticles(currentPage, token);
     dispatch(setArticles(res));
   } catch (error) {
     dispatch(setError(error));
   }
 };
 
-export const getSingleArticle = (slug) => async (dispatch) => {
+export const getSingleArticle = (slug, token = null) => async (dispatch) => {
   try {
-    const res = await request.getSingleArticle(slug);
+    const res = await request.getSingleArticle(slug, token);
     dispatch(setSingleArticle(res.article));
+    dispatch(setSingleArticleIsLoaded());
   } catch (error) {
     dispatch(setError(error));
   }
@@ -69,4 +82,16 @@ export const setCurrentUser = (payload) => {
     type: 'SET-CURRENT-USER',
     payload,
   };
+};
+
+export const getCurrentUserToState = (token) => async (dispatch) => {
+  try {
+    const res = await request.getCurrentUser(token);
+
+    if (res.user) {
+      dispatch(setCurrentUser(res.user));
+    }
+  } catch (error) {
+    dispatch(setError(error));
+  }
 };

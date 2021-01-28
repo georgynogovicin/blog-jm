@@ -1,4 +1,3 @@
-/*eslint-disable */
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Redirect } from 'react-router-dom';
@@ -33,7 +32,7 @@ const CreateArticleForm = ({ onSubmit, error, edit, articleData }) => {
       }, {});
       setTagsValue(tagList);
     }
-  }, []);
+  }, [defaultTags, edit]);
 
   if (error) {
     formsErrorHandler(error, setError);

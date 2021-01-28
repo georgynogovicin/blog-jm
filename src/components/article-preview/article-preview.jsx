@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
@@ -8,17 +8,27 @@ import { Popconfirm } from 'antd';
 import AuthorAvatar from '../author-avatar';
 import cropText from '../../services/helpers/crop-text';
 import request from '../../services/api/api';
-import { redirectToArticles, redirectToEditArticle } from '../../services/routes/routes';
+import { setError } from '../../services/actions/actions';
+import { redirectToArticles, redirectToEditArticle, redirectToSignIn } from '../../services/routes/routes';
 
 import classes from './article-preview.module.scss';
 
-const ArticlePreview = ({ slug, title, body, description, tagList, author, createdAt, favorited, favoritesCount }) => {
+const ArticlePreview = ({ isList, article }) => {
+  const [singleArticle, setSingleArticle] = useState(article);
+
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
-  const singleArticle = useSelector((state) => state.articles.singleArticle);
   const currentUser = useSelector((state) => state.currentUser);
   const authToken = useSelector((state) => state.currentUser.token);
 
+  const dispatch = useDispatch();
+
   const history = useHistory();
+
+  const { slug, title, body, description, tagList, author, createdAt, favorited, favoritesCount } = singleArticle;
+
+  useEffect(() => {
+    setSingleArticle(article);
+  }, [article]);
 
   const onDeleteArticle = () => {
     request.deleteArticle(slug, authToken);
@@ -29,7 +39,20 @@ const ArticlePreview = ({ slug, title, body, description, tagList, author, creat
     history.push(redirectToEditArticle(slug));
   };
 
-  const isOwnArticle = currentUser.username === author.username && singleArticle;
+  const favoriteArticleHandler = async () => {
+    try {
+      if (isLoggedIn) {
+        const res = await request.favoriteArticle(slug, authToken, favorited);
+        setSingleArticle(res.article);
+      } else {
+        history.push(redirectToSignIn());
+      }
+    } catch (error) {
+      dispatch(setError(error));
+    }
+  };
+
+  const isOwnArticle = currentUser.username === author.username && !isList;
 
   const tags =
     tagList.length > 0
@@ -48,8 +71,6 @@ const ArticlePreview = ({ slug, title, body, description, tagList, author, creat
     <HeartFilled style={{ fontSize: '1rem', color: '#FF0707' }} />
   );
 
-  const descrClass = singleArticle ? '--active' : null;
-
   return (
     <li className={classes['preview-card']}>
       <div className={classes['preview-card__header-wrapper']}>
@@ -57,12 +78,12 @@ const ArticlePreview = ({ slug, title, body, description, tagList, author, creat
           <Link to={`/articles/${slug}`} className={classes['preview-card__header-link']}>
             {title}
           </Link>
-          <button type="button" className={classes['like-button']} label="Like">
+          <button type="button" className={classes['like-button']} label="Like" onClick={favoriteArticleHandler}>
             {heart}
           </button>
           <span className={classes['preview-card__favorites-count']}>{favoritesCount}</span>
           <div className={classes['preview-card__tags']}>{tags}</div>
-          <p className={classes[`preview-card__descr${descrClass}`]}>{description}</p>
+          <p className={classes[`preview-card__descr${isList || '--active'}`]}>{description}</p>
         </div>
         <div className={classes.author}>
           <AuthorAvatar author={author} createdAt={createdAt} />
@@ -86,23 +107,14 @@ const ArticlePreview = ({ slug, title, body, description, tagList, author, creat
           )}
         </div>
       </div>
-      <div className={classes['preview-card__body']}>
-        {singleArticle ? <ReactMarkdown>{body}</ReactMarkdown> : null}
-      </div>
+      <div className={classes['preview-card__body']}>{isList || <ReactMarkdown>{body}</ReactMarkdown>}</div>
     </li>
   );
 };
 
 ArticlePreview.propTypes = {
-  slug: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  body: PropTypes.string.isRequired,
-  tagList: PropTypes.instanceOf(Array).isRequired,
-  author: PropTypes.instanceOf(Object).isRequired,
-  createdAt: PropTypes.string.isRequired,
-  favorited: PropTypes.bool.isRequired,
-  favoritesCount: PropTypes.number.isRequired,
-  description: PropTypes.string.isRequired,
+  article: PropTypes.instanceOf(Object).isRequired,
+  isList: PropTypes.bool.isRequired,
 };
 
 export default ArticlePreview;

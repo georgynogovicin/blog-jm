@@ -11,10 +11,11 @@ const ArticleList = () => {
   const articles = useSelector((state) => state.articles.articlesList);
   const currentPage = useSelector((state) => state.currentPage);
   const articlesCount = useSelector((state) => state.articles.articlesCount);
+  const authToken = useSelector((state) => state.currentUser.token);
 
   useEffect(() => {
-    dispatch(getArticles(currentPage));
-  }, [dispatch, currentPage]);
+    dispatch(getArticles(currentPage, authToken));
+  }, [dispatch, currentPage, authToken]);
 
   const onChange = (pageNumber) => {
     window.scrollTo({
@@ -31,8 +32,8 @@ const ArticleList = () => {
   const page = currentPage === 0 ? 1 : currentPage / 10;
 
   const list = articles.map((item) => {
-    const { id, ...props } = item;
-    return <ArticlePreview key={id} {...props} />;
+    const { slug, ...article } = item;
+    return <ArticlePreview key={slug} isList article={article} />;
   });
 
   const spinner = !list.length ? <Spin style={{ position: 'absolute', top: '50%', left: '50%' }} size="large" /> : null;

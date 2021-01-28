@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { setSingleArticle, setError as setErrorToState } from '../../services/actions/actions';
-import { redirectToSingleArticle } from '../../services/routes/routes';
+import { redirectToArticles } from '../../services/routes/routes';
 import request from '../../services/api/api';
 import CreateArticleForm from '../create-article-form';
 
@@ -18,9 +18,8 @@ const NewArticle = () => {
       const res = await request.createArticle(data, authToken);
 
       if (res.article) {
-        const { slug } = res.article;
         dispatch(setSingleArticle(res.article));
-        history.push(redirectToSingleArticle(slug));
+        history.push(redirectToArticles());
       }
 
       if (res.errors) {
