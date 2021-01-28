@@ -13,7 +13,7 @@ import { redirectToArticles, redirectToEditArticle, redirectToSignIn } from '../
 
 import classes from './article-preview.module.scss';
 
-const ArticlePreview = ({ isList, article }) => {
+const ArticlePreview = ({ isList, article, slug }) => {
   const [singleArticle, setSingleArticle] = useState(article);
 
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -24,7 +24,7 @@ const ArticlePreview = ({ isList, article }) => {
 
   const history = useHistory();
 
-  const { slug, title, body, description, tagList, author, createdAt, favorited, favoritesCount } = singleArticle;
+  const { title, body, description, tagList, author, createdAt, favorited, favoritesCount } = singleArticle;
 
   useEffect(() => {
     setSingleArticle(article);
@@ -115,6 +115,7 @@ const ArticlePreview = ({ isList, article }) => {
 ArticlePreview.propTypes = {
   article: PropTypes.instanceOf(Object).isRequired,
   isList: PropTypes.bool.isRequired,
+  slug: PropTypes.string.isRequired,
 };
 
 export default ArticlePreview;

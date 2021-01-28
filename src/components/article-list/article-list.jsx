@@ -33,7 +33,7 @@ const ArticleList = () => {
 
   const list = articles.map((item) => {
     const { slug, ...article } = item;
-    return <ArticlePreview key={slug} isList article={article} />;
+    return <ArticlePreview key={slug} isList article={article} slug={slug} />;
   });
 
   const spinner = !list.length ? <Spin style={{ position: 'absolute', top: '50%', left: '50%' }} size="large" /> : null;
