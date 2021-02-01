@@ -8,7 +8,6 @@ import request from '../../services/api/api';
 import { setCurrentUser, setLogIn, setError as setErrorToState } from '../../services/actions/actions';
 import { setUserToLocalStorage } from '../../services/api/localStroage';
 import { redirectToArticles } from '../../services/routes/routes';
-// import formsErrorHandler from '../../services/helpers/formsErrorHandler';
 
 import classes from './sign-in-form.module.scss';
 
