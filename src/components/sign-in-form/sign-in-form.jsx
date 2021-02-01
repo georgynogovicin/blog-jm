@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Alert } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import FormInput from '../form-components/form-input';
@@ -7,14 +8,28 @@ import request from '../../services/api/api';
 import { setCurrentUser, setLogIn, setError as setErrorToState } from '../../services/actions/actions';
 import { setUserToLocalStorage } from '../../services/api/localStroage';
 import { redirectToArticles } from '../../services/routes/routes';
-import formsErrorHandler from '../../services/helpers/formsErrorHandler';
+// import formsErrorHandler from '../../services/helpers/formsErrorHandler';
 
 import classes from './sign-in-form.module.scss';
 
 const SignInForm = () => {
+  const [serverError, setServerError] = useState(null);
+
   const dispatch = useDispatch();
   const history = useHistory();
-  const { register, handleSubmit, errors, setError } = useForm();
+  const { register, handleSubmit, errors } = useForm();
+
+  const serverErrorHandler = () => {
+    const errorMessage = Object.keys(serverError);
+
+    const message = errorMessage.map((item) => {
+      const msgs = serverError[item].join(` and `);
+      return `${item} ${msgs}`;
+    });
+
+    return <Alert message={message} type="warning" showIcon closable />;
+  };
+
   const onSubmit = async (value) => {
     try {
       const res = await request.userAuth(value);
@@ -27,7 +42,7 @@ const SignInForm = () => {
       }
 
       if (res.errors) {
-        formsErrorHandler(res.errors, setError);
+        setServerError(res.errors);
       }
     } catch (error) {
       dispatch(setErrorToState(error));
@@ -38,6 +53,7 @@ const SignInForm = () => {
     <form className={classes['sign-in']} onSubmit={handleSubmit(onSubmit)}>
       <fieldset>
         <legend>Sign In</legend>
+        {serverError && serverErrorHandler()}
         <ul role="none">
           <FormInput
             label="Email address"

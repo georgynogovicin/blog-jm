@@ -1,41 +1,52 @@
 import request from '../api/api';
 
+export const SET_ERROR = 'SET-ERROR';
+export const SET_ARTICLES = 'SET-ARTICLES';
+export const SET_SINGLE_ARTICLE = 'SET-SINGLE-ARTICLE';
+export const SET_SINGLE_ARTICLE_IS_LOADED = 'SET-SINGLE-ARTICLE-IS-LOADED';
+export const SET_SINGLE_ARTICLE_IS_UNLOADED = 'SET-SINGLE-ARTICLE-IS-UNLOADED';
+export const REMOVE_SINGLE_ARTICLE = 'REMOVE-SINGLE-ARTICLE';
+export const LOG_IN = 'LOG-IN';
+export const LOG_OUT = 'LOG-OUT';
+export const SET_PAGE = 'SET-PAGE';
+export const SET_CURRENT_USER = 'SET-CURRENT-USER';
+
 export const setError = (payload) => {
   return {
-    type: 'SET-ERROR',
+    type: SET_ERROR,
     payload,
   };
 };
 
 export const setArticles = (payload) => {
   return {
-    type: 'SET-ARTICLES',
+    type: SET_ARTICLES,
     payload,
   };
 };
 
 export const setSingleArticle = (payload) => {
   return {
-    type: 'SET-SINGLE-ARTICLE',
+    type: SET_SINGLE_ARTICLE,
     payload,
   };
 };
 
 export const setSingleArticleIsLoaded = () => {
   return {
-    type: 'SET-SINGLE-ARTICLE-IS-LOADED',
+    type: SET_SINGLE_ARTICLE_IS_LOADED,
   };
 };
 
 export const setSingleArticleIsUnloaded = () => {
   return {
-    type: 'SET-SINGLE-ARTICLE-IS-UNLOADED',
+    type: SET_SINGLE_ARTICLE_IS_UNLOADED,
   };
 };
 
 export const removeSingleArticle = () => {
   return {
-    type: 'REMOVE-SINGLE-ARTICLE',
+    type: REMOVE_SINGLE_ARTICLE,
   };
 };
 
@@ -60,26 +71,26 @@ export const getSingleArticle = (slug, token = null) => async (dispatch) => {
 
 export const setLogIn = () => {
   return {
-    type: 'LOG-IN',
+    type: LOG_IN,
   };
 };
 
 export const setLogOut = () => {
   return {
-    type: 'LOG-OUT',
+    type: LOG_OUT,
   };
 };
 
 export const setPage = (payload) => {
   return {
-    type: 'SET-PAGE',
+    type: SET_PAGE,
     payload,
   };
 };
 
 export const setCurrentUser = (payload) => {
   return {
-    type: 'SET-CURRENT-USER',
+    type: SET_CURRENT_USER,
     payload,
   };
 };

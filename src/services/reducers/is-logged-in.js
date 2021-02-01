@@ -1,11 +1,13 @@
+import { LOG_OUT, LOG_IN } from '../actions/actions';
+
 const initialState = false;
 
 const isLoggedIn = (state = initialState, action) => {
   switch (action.type) {
-    case 'LOG-IN':
+    case LOG_IN:
       return true;
 
-    case 'LOG-OUT':
+    case LOG_OUT:
       return false;
 
     default:
