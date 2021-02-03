@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -8,6 +8,7 @@ import request from '../../services/api/api';
 import { setError as setErrorToState, setCurrentUser, setLogIn } from '../../services/actions/actions';
 import { redirectToArticles } from '../../services/routes/routes';
 import formsErrorHandler from '../../services/helpers/formsErrorHandler';
+import useAsyncForm from '../useAsyncForm';
 
 import classes from './sign-up-form.module.scss';
 
@@ -18,22 +19,28 @@ const SignUpForm = () => {
   const { register, handleSubmit, errors, watch, setError } = useForm();
   const repeatPassword = watch('password', '');
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await request.registerUser(data);
+  const requestFn = (val) => {
+    return request.registerUser(val);
+  };
 
-      if (res.errors) {
-        formsErrorHandler(res.errors, setError);
-      }
+  const { execute, status, value, error } = useAsyncForm(requestFn, false);
 
-      if (res.user) {
-        dispatch(setCurrentUser(res.user));
-        dispatch(setLogIn());
-        history.push(redirectToArticles());
-      }
-    } catch (error) {
+  useEffect(() => {
+    if (value?.user) {
+      dispatch(setCurrentUser(value.user));
+      dispatch(setLogIn());
+      history.push(redirectToArticles());
+    }
+    if (value?.errors) {
+      formsErrorHandler(value.errors, setError);
+    }
+    if (error) {
       dispatch(setErrorToState(error));
     }
+  }, [value, dispatch, history, setError, error]);
+
+  const onSubmit = (data) => {
+    execute(data);
   };
 
   return (
@@ -51,8 +58,8 @@ const SignUpForm = () => {
               minLength: { value: 3, message: 'Имя должно быть длиннее 3-х символов' },
               maxLength: { value: 20, message: 'Имя должно быть не больше 20-ти символов' },
               validate: {
-                userName: async (value) => {
-                  return (await request.isUserNameFree(value)) || 'Имя пользователя уже занято';
+                userName: async (val) => {
+                  return (await request.isUserNameFree(val)) || 'Имя пользователя уже занято';
                 },
               },
             })}
@@ -89,7 +96,7 @@ const SignUpForm = () => {
             ref={register({
               required: { value: true, message: 'Повторите пароль' },
               validate: {
-                checkPass: (value) => value === repeatPassword || 'Пароли должны совпадать',
+                checkPass: (pass) => pass === repeatPassword || 'Пароли должны совпадать',
               },
             })}
           />
@@ -103,7 +110,12 @@ const SignUpForm = () => {
             })}
           />
           <li>
-            <input type="submit" className={classes['form-button']} value="Create" />
+            <input
+              type="submit"
+              className={classes['form-button']}
+              value={status === 'pending' ? 'Send...' : 'Create'}
+              disabled={status === 'pending'}
+            />
           </li>
         </ul>
       </fieldset>

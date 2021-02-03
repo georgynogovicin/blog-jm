@@ -11,6 +11,13 @@ import NewArticle from '../new-article';
 import EditArticle from '../edit-article';
 import { getUserFromLocalStorage } from '../../services/api/localStroage';
 import { setLogIn, getCurrentUserToState } from '../../services/actions/actions';
+import {
+  redirectToSignIn,
+  redirectToSignUp,
+  redirectToArticles,
+  redirectToProfile,
+  redirectToNewArticle,
+} from '../../services/routes/routes';
 
 import classes from './app.module.scss';
 
@@ -37,12 +44,12 @@ const App = () => {
       <Router>
         <Header />
         <Switch>
-          <Route path={['/', '/articles']} component={ArticleList} exact />
+          <Route path={['/', redirectToArticles()]} component={ArticleList} exact />
           <Route path="/articles/:slug" component={SingleArticlePage} exact />
-          <Route path="/sign-in" component={SignInForm} exact />
-          <Route path="/sign-up" component={SignUpForm} exact />
-          <Route path="/profile" component={EditProfile} exact />
-          <Route path="/new-article" component={NewArticle} exact />
+          <Route path={redirectToSignIn()} component={SignInForm} exact />
+          <Route path={redirectToSignUp()} component={SignUpForm} exact />
+          <Route path={redirectToProfile()} component={EditProfile} exact />
+          <Route path={redirectToNewArticle()} component={NewArticle} exact />
           <Route path="/articles/:slug/edit" component={EditArticle} exact />
           <Redirect to="/" />
         </Switch>

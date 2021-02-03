@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spin, Pagination } from 'antd';
 import ArticlePreview from '../article-preview';
-import { getArticles, setPage } from '../../services/actions/actions';
+import { getArticles, setPage, setArticlesIsUnloaded } from '../../services/actions/actions';
 
 import classes from './article-list.module.scss';
 
@@ -12,16 +12,14 @@ const ArticleList = () => {
   const currentPage = useSelector((state) => state.currentPage);
   const articlesCount = useSelector((state) => state.articles.articlesCount);
   const authToken = useSelector((state) => state.currentUser.token);
+  const isLoaded = useSelector((state) => state.articles.articlesIsLoaded);
 
   useEffect(() => {
     dispatch(getArticles(currentPage, authToken));
   }, [dispatch, currentPage, authToken]);
 
   const onChange = (pageNumber) => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    dispatch(setArticlesIsUnloaded());
     if (pageNumber !== 1) {
       dispatch(setPage(pageNumber * 10));
     } else {
@@ -36,14 +34,14 @@ const ArticleList = () => {
     return <ArticlePreview key={slug} isList article={article} slug={slug} />;
   });
 
-  const spinner = !list.length ? <Spin style={{ position: 'absolute', top: '50%', left: '50%' }} size="large" /> : null;
+  const spinner = <Spin style={{ position: 'absolute', top: '50%', left: '50%' }} size="large" />;
   const pagination = list.length ? (
     <Pagination
       current={page}
       total={articlesCount}
       size="medium"
       showSizeChanger={false}
-      style={{ textAlign: 'center', paddingBottom: '28px' }}
+      className={classes.pagination}
       onChange={onChange}
     />
   ) : null;
@@ -51,10 +49,10 @@ const ArticleList = () => {
   return (
     <main className={classes.content}>
       <ul className={classes['article-list']}>
-        {list}
-        {pagination}
+        {!isLoaded || list}
+        {!isLoaded || pagination}
       </ul>
-      {spinner}
+      {isLoaded || spinner}
     </main>
   );
 };

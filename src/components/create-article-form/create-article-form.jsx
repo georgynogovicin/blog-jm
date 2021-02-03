@@ -8,7 +8,7 @@ import formsErrorHandler from '../../services/helpers/formsErrorHandler';
 
 import classes from './create-artcile-form.module.scss';
 
-const CreateArticleForm = ({ onSubmit, error, edit, articleData }) => {
+const CreateArticleForm = ({ onSubmit, error, edit, articleData, status }) => {
   const [tagsCount, setTagsCount] = useState(1);
   const [tagsValue, setTagsValue] = useState({});
 
@@ -119,7 +119,12 @@ const CreateArticleForm = ({ onSubmit, error, edit, articleData }) => {
             </label>
           </li>
           <li style={{ textAlign: 'left' }}>
-            <input type="submit" className={classes['form-button']} value="Save" />
+            <input
+              type="submit"
+              className={classes['form-button']}
+              value={status === 'pending' ? 'Send...' : 'Save'}
+              disabled={status === 'pending'}
+            />
           </li>
         </ul>
       </fieldset>
@@ -131,6 +136,7 @@ CreateArticleForm.defaultProps = {
   error: null,
   articleData: {},
   edit: false,
+  status: 'idle',
 };
 
 CreateArticleForm.propTypes = {
@@ -138,6 +144,7 @@ CreateArticleForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   edit: PropTypes.bool,
   articleData: PropTypes.instanceOf(Object),
+  status: PropTypes.string,
 };
 
 export default CreateArticleForm;

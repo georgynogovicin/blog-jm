@@ -5,12 +5,15 @@ import {
   SET_SINGLE_ARTICLE_IS_UNLOADED,
   REMOVE_SINGLE_ARTICLE,
   SET_ARTICLES,
+  ARTICLES_IS_LOADED,
+  ARTICLES_IS_UNLOADED,
 } from '../actions/actions';
 
 const addIdFn = addId();
 
 const initialState = {
   articlesList: [],
+  articlesIsLoaded: false,
   singleArticle: null,
   singleArticleIsLoaded: false,
   articlesCount: 0,
@@ -47,6 +50,18 @@ const articles = (state = initialState, action) => {
       return {
         ...state,
         singleArticleIsLoaded: false,
+      };
+
+    case ARTICLES_IS_LOADED:
+      return {
+        ...state,
+        articlesIsLoaded: true,
+      };
+
+    case ARTICLES_IS_UNLOADED:
+      return {
+        ...state,
+        articlesIsLoaded: false,
       };
 
     default:

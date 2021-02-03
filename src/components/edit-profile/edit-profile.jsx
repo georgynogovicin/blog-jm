@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +8,7 @@ import { setCurrentUser, setError as setErrorAction } from '../../services/actio
 import { setUserToLocalStorage } from '../../services/api/localStroage';
 import { redirectToArticles } from '../../services/routes/routes';
 import formsErrorHandler from '../../services/helpers/formsErrorHandler';
+import useAsyncForm from '../useAsyncForm';
 
 import classes from './edit-profile.module.scss';
 
@@ -17,22 +18,30 @@ const EditProfile = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await request.editUser(data, authToken);
+  const requestFn = (data) => {
+    return request.editUser(data, authToken);
+  };
 
-      if (res.errors) {
-        formsErrorHandler(res.errors, setError);
-      }
+  const { execute, status, value, error } = useAsyncForm(requestFn, false);
 
-      if (res.user) {
-        dispatch(setCurrentUser(res.user));
-        setUserToLocalStorage(res.user);
-        history.push(redirectToArticles());
-      }
-    } catch (error) {
+  useEffect(() => {
+    if (value?.user) {
+      dispatch(setCurrentUser(value.user));
+      setUserToLocalStorage(value.user);
+      history.push(redirectToArticles());
+    }
+
+    if (value?.errors) {
+      formsErrorHandler(value.errors, setError);
+    }
+
+    if (error) {
       dispatch(setErrorAction(error));
     }
+  }, [value, error, dispatch, history, setError]);
+
+  const onSubmit = (data) => {
+    execute(data);
   };
 
   return (
@@ -78,7 +87,12 @@ const EditProfile = () => {
             })}
           />
           <li>
-            <input type="submit" className={classes['form-button']} value="Save" />
+            <input
+              type="submit"
+              className={classes['form-button']}
+              value={status === 'pending' ? 'Send...' : 'Save'}
+              disabled={status === 'pending'}
+            />
           </li>
         </ul>
       </fieldset>

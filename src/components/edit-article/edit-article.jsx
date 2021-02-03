@@ -6,6 +6,7 @@ import request from '../../services/api/api';
 import CreateArticleForm from '../create-article-form';
 import { redirectToSingleArticle } from '../../services/routes/routes';
 import { setError } from '../../services/actions/actions';
+import useAsyncForm from '../useAsyncForm';
 
 const EditArticle = () => {
   const { slug } = useParams();
@@ -17,6 +18,24 @@ const EditArticle = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [serverError, setServerError] = useState(null);
 
+  const requestFn = (data) => {
+    return request.updateArticle(data, authToken, slug);
+  };
+
+  const { execute, status, value, error } = useAsyncForm(requestFn, false);
+
+  useEffect(() => {
+    if (value?.article) {
+      history.push(redirectToSingleArticle(value.article.slug));
+    }
+    if (value?.errors) {
+      setServerError(value.errors);
+    }
+    if (error) {
+      dispatch(setError(error));
+    }
+  }, [value, error, dispatch, history]);
+
   useEffect(() => {
     const getArticleData = async (slugValue) => {
       try {
@@ -26,8 +45,8 @@ const EditArticle = () => {
           setArtcileData(res.article);
           setIsLoaded(true);
         }
-      } catch (error) {
-        dispatch(setError(error));
+      } catch (err) {
+        dispatch(setError(err));
       }
     };
 
@@ -35,25 +54,13 @@ const EditArticle = () => {
   }, [slug, dispatch]);
 
   const onSubmit = async (data) => {
-    try {
-      const res = await request.updateArticle(data, authToken, slug);
-
-      if (res.article) {
-        history.push(redirectToSingleArticle(res.article.slug));
-      }
-
-      if (res.errors) {
-        setServerError(res.errors);
-      }
-    } catch (error) {
-      dispatch(setError(error));
-    }
+    execute(data);
   };
 
   return (
     <>
       {isLoaded ? (
-        <CreateArticleForm edit articleData={articleData} onSubmit={onSubmit} error={serverError} />
+        <CreateArticleForm edit articleData={articleData} onSubmit={onSubmit} error={serverError} status={status} />
       ) : (
         <Spin style={{ position: 'absolute', top: '50%', left: '50%' }} size="large" />
       )}

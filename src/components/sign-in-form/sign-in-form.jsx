@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Alert } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
@@ -8,6 +8,7 @@ import request from '../../services/api/api';
 import { setCurrentUser, setLogIn, setError as setErrorToState } from '../../services/actions/actions';
 import { setUserToLocalStorage } from '../../services/api/localStroage';
 import { redirectToArticles } from '../../services/routes/routes';
+import useAsyncForm from '../useAsyncForm';
 
 import classes from './sign-in-form.module.scss';
 
@@ -18,6 +19,27 @@ const SignInForm = () => {
   const history = useHistory();
   const { register, handleSubmit, errors } = useForm();
 
+  const requestFn = (val) => {
+    return request.userAuth(val);
+  };
+
+  const { execute, status, value, error } = useAsyncForm(requestFn, false);
+
+  useEffect(() => {
+    if (value?.user) {
+      dispatch(setCurrentUser(value.user));
+      dispatch(setLogIn());
+      setUserToLocalStorage(value.user);
+      history.push(redirectToArticles());
+    }
+    if (value?.errors) {
+      setServerError(value.errors);
+    }
+    if (error) {
+      dispatch(setErrorToState(error));
+    }
+  }, [value, error, dispatch, history]);
+
   const serverErrorHandler = () => {
     const errorMessage = Object.keys(serverError);
 
@@ -26,26 +48,11 @@ const SignInForm = () => {
       return `${item} ${msgs}`;
     });
 
-    return <Alert message={message} type="warning" showIcon closable />;
+    return <Alert message={message} type="warning" showIcon closable onClose={() => setServerError(null)} />;
   };
 
-  const onSubmit = async (value) => {
-    try {
-      const res = await request.userAuth(value);
-
-      if (res.user) {
-        dispatch(setCurrentUser(res.user));
-        dispatch(setLogIn());
-        setUserToLocalStorage(res.user);
-        history.push(redirectToArticles());
-      }
-
-      if (res.errors) {
-        setServerError(res.errors);
-      }
-    } catch (error) {
-      dispatch(setErrorToState(error));
-    }
+  const onSubmit = (data) => {
+    execute(data);
   };
 
   return (
@@ -77,7 +84,12 @@ const SignInForm = () => {
             })}
           />
           <li>
-            <input type="submit" className={classes['form-button']} value="Login" />
+            <input
+              type="submit"
+              className={classes['form-button']}
+              value={status === 'pending' ? 'Send...' : 'Login'}
+              disabled={status === 'pending'}
+            />
           </li>
         </ul>
       </fieldset>

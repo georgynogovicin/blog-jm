@@ -10,6 +10,8 @@ export const LOG_IN = 'LOG-IN';
 export const LOG_OUT = 'LOG-OUT';
 export const SET_PAGE = 'SET-PAGE';
 export const SET_CURRENT_USER = 'SET-CURRENT-USER';
+export const ARTICLES_IS_LOADED = 'ARTCILES-IS-LOADED';
+export const ARTICLES_IS_UNLOADED = 'ARTICLES-IS-UNLOADED';
 
 export const setError = (payload) => {
   return {
@@ -50,12 +52,26 @@ export const removeSingleArticle = () => {
   };
 };
 
+export const setArtcilesIsLoaded = () => {
+  return {
+    type: ARTICLES_IS_LOADED,
+  };
+};
+
+export const setArticlesIsUnloaded = () => {
+  return {
+    type: ARTICLES_IS_UNLOADED,
+  };
+};
+
 export const getArticles = (currentPage, token = null) => async (dispatch) => {
   try {
     const res = await request.getArticles(currentPage, token);
     dispatch(setArticles(res));
+    dispatch(setArtcilesIsLoaded());
   } catch (error) {
     dispatch(setError(error));
+    dispatch(setArticlesIsUnloaded());
   }
 };
 

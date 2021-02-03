@@ -71,6 +71,10 @@ $HIGHLIGHT-RED: #f5222d;
   background-color: $PRIMARY-BLUE;
   color: $BGC-GREY-COLOR;
   cursor: pointer;
+
+  &:disabled {
+    background-color: $DISABLED-GREY-LIGTH;
+  }
 }
 
 @mixin form {
